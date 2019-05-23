@@ -5,6 +5,7 @@ library("SingleR")
 args <- commandArgs(trailingOnly = TRUE)
 
 seurat.obj <- readRDS(args[1])
+species     <- args[2]
 
 CreateBigSingleRObject = function(counts,annot=NULL,project.name,xy,clusters,N=10000,
                                   min.genes=200,technology='10X',
@@ -45,6 +46,7 @@ CreateBigSingleRObject = function(counts,annot=NULL,project.name,xy,clusters,N=1
   singler
 }
 
+if(species == "Human"){
 singler <- CreateBigSingleRObject(seurat.obj@data, 
 	annot = NULL,
 	xy = NULL,
@@ -53,7 +55,7 @@ singler <- CreateBigSingleRObject(seurat.obj@data,
 	technology = "10X", 
 	species = "Human", 
 	citation = "",
-	ref.list = list(blueprint_encode), 
+	ref.list = list(blueprint_encode, hpca), 
 	normalize.gene.length = F, 
 	variable.genes = "de",
 	fine.tune = T, 
@@ -62,9 +64,27 @@ singler <- CreateBigSingleRObject(seurat.obj@data,
 	reduce.file.size = T,
 	clusters = seurat.obj@meta.data$RawClusterNames,
 	numCores = 16)
-
-
-#outfile <- gsub(pattern = ".rds", replacement = "singlerAnot.RData", args[1])
+} else if (species == "Mouse") {
+singler <- CreateBigSingleRObject(seurat.obj@data, 
+	annot = NULL,
+	xy = NULL,
+	project.name = "tmp",
+	min.genes = 0,
+	technology = "10X", 
+	species = "Mouse", 
+	citation = "",
+	ref.list = list(immgen, mouse.rnaseq), 
+	normalize.gene.length = F, 
+	variable.genes = "de",
+	fine.tune = T, 
+	do.signatures = F, 
+	do.main.types = T, 
+	reduce.file.size = T,
+	clusters = seurat.obj@meta.data$RawClusterNames,
+	numCores = 16)
+} else {
+stop("Please provide a valid species")
+}
 
 save(singler,file="./singler.RData")
 
