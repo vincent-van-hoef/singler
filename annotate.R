@@ -86,5 +86,10 @@ singler <- CreateBigSingleRObject(seurat.obj@data,
 stop("Please provide a valid species")
 }
 
+# Add annotations to original object
+seurat.obj@meta.data$singlerMain <- singler$...
+
+
+
 save(singler,file="./singler.RData")
 
