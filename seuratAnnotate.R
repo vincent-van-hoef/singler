@@ -10,21 +10,12 @@ library("sctransform")
 
 args = commandArgs(trailingOnly = TRUE)
 
+setwd("~/projects/workflows/singler")
 # This workflow describes a Seurat clustering with automatic annotation of cell types. It uses Seurat v3 and sctransform, which allows for a better standardization of the workflow.
 # First, specify some variables...
-data.dirs <- c(args[1],args[2], args[3], args[4], args[5])[length(args)] #"/path/to/filtered_gene_bc_matrices/hg19/" 
-names(data.dirs) <- c("samp1", "samp2", "samp3", "samp4", "samp5")[length(args)]
+obj  <- readRDS(args[1])
+obj <- UpdateSeuratObject(obj)
 species <- "Human" # or "Mouse"
-
-objList <- list()
-for(i in 1:length(data.dirs)){
-data 	<- Read10X(data.dir = data.dirs[i])
-obj 	<- CreateSeuratObject(counts = data)
-objList[[i]] <- obj
-}
-names(objList) <- names(data.dirs)
-# Merging different Seurat objects is possible with the merge function
-data <- merge(data[[1]], y = c(data[[2]], data[[3]] data[[4]]), add.cell.ids = names(data.dirs))
 
 # store mitochondrial percentage in object meta data
 obj 	<- PercentageFeatureSet(obj, pattern = "^MT-", col.name = "percent.mt")
